@@ -9,7 +9,8 @@ from src.app_bundle.exceptions.domain_exceptions.security.base_security_exceptio
 
 app = Flask(__name__)
 
-logging.basicConfig(filename='logs.log', level=logging.DEBUG,
+logging.basicConfig(filename='logs.log',
+                    level=logging.FATAL,
                     format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 

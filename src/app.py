@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_dotenv import DotEnv
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -22,15 +23,16 @@ class App:
     def get_app() -> Flask:
         return App.__app
 
-    def start(self, port='5000', host='127.0.0.1', debug=True) -> 'App':
-        self.__app.run(debug=debug, port=port, host=host)
+    def start(self) -> 'App':
+        self.__app.run(debug=App.get_config().get('DEBUG'),
+                       port=App.get_config().get('PORT'),
+                       host=App.get_config().get('HOST'))
 
         return self
 
     def load_config(self) -> 'App':
-        self.__app.config['SECRET_KEY'] = 'a really really really really long secret key'
-        self.__app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://db-sokolov:db-123QWEasd1@localhost/blog_flask'
-        self.__app.config['APP_ENV'] = 'local'
+        env = DotEnv()
+        env.init_app(App.get_app())
 
         return self
 
