@@ -2,3 +2,4 @@
 alembic.ini
 .idea
 __pycache__
+logs.log

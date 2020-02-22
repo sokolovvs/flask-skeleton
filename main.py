@@ -1,18 +1,23 @@
 from flask import Flask
 from src.app import App
-from src.exceptions.domain_exceptions.entity.entity_not_found_exception import EntityNotFoundException
-from src.exceptions.domain_exceptions.entity.validation.entity_validation_exception import EntityValidationException
-from src.exceptions.domain_exceptions.improve_domain_exception import DomainException
-from src.exceptions.domain_exceptions.security.base_security_exception import BaseSecurityException
+import logging
+from src.app_bundle.exceptions.domain_exceptions.entity.entity_not_found_exception import EntityNotFoundException
+from src.app_bundle.exceptions.domain_exceptions.entity.validation.entity_validation_exception import \
+    EntityValidationException
+from src.app_bundle.exceptions.domain_exceptions.improve_domain_exception import ImproveDomainException
+from src.app_bundle.exceptions.domain_exceptions.security.base_security_exception import BaseSecurityException
 
 app = Flask(__name__)
+
+logging.basicConfig(filename='logs.log', level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 
 @app.errorhandler(Exception)
 def handle_error(exception):
     code = 500
 
-    if isinstance(exception, DomainException):
+    if isinstance(exception, ImproveDomainException):
         if isinstance(exception, EntityNotFoundException):
             code = 404
         elif isinstance(exception, BaseSecurityException):
@@ -20,17 +25,17 @@ def handle_error(exception):
         elif isinstance(exception, EntityValidationException):
             code = 422
 
-        return jsonify(errors=str(exception)), code
+        return jsonify(errors=exception.get_errors(), message=exception.get_message()), code
 
     if App.is_production_env():
-        return jsonify(errors='Unknown error'), code
+        return jsonify(message='Unknown error'), code
 
     raise exception
 
 
 with app.app_context():
-    from src.routes.api import *
-    from src.routes.web import *
+    from src.app_bundle.routes.api import *
+    from src.app_bundle.routes.web import *
 
 
 def init_app(app: Flask):
