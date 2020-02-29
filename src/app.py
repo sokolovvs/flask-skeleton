@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_dotenv import DotEnv
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 
 class App:
@@ -9,6 +10,7 @@ class App:
 
     def __init__(self, app: Flask) -> None:
         App.__app = app
+        CORS(App.__app)
         App.__init_db(app)
 
     @staticmethod
