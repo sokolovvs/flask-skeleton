@@ -22,7 +22,7 @@ class PostValidator(AbstractEntityValidator):
             errors['name'].append('Max length is 255')
 
         for key in list(errors):
-            if errors[key] is []:
+            if not errors[key]:
                 errors.pop(key)
 
         if bool(errors):
